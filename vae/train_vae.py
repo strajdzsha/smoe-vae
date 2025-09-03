@@ -1,18 +1,17 @@
-import sys
-sys.path.append("/home/stnikoli/semestral-project-awareness/vae")
 from vae_mixture_of_experts import main
 
 if __name__ == "__main__":
+    ### Experiment with varying dataset percentage (Fig. 6 in the paper)
     import yaml
-    with open('semestral-project-awareness/vae/config.yaml', 'r') as f:
+    with open('config.yaml', 'r') as f:
         config = yaml.safe_load(f)
     config = config['train']
     
-    n_experts = [15, 20, 25, 30, 35, 40, 45, 50]
+    n_experts = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20, 25, 30, 35, 40, 45, 50]
 
-    for p in [0.4]:
+    for p in [0.05, 0.1, 0.2, 0.4, 1.0]:
         for n in n_experts:
-            for trial in range(5, 8):
+            for trial in range(0, 5):
                 config['num_experts'] = n
                 config['dataset'] = 'quickdraw'
                 config['dataset_percentage'] = p
