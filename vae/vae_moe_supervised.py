@@ -283,7 +283,6 @@ def test(model, dataloader, device, epoch, beta=1.0, load_balancing_coeff=0.0, e
     avg_reconstruction_loss = total_reconstruction_loss / len(dataloader.dataset)
     avg_kl_divergence_loss = total_kl_divergence_loss / len(dataloader.dataset)
     avg_expert_selection_loss = total_expert_selection_loss / len(dataloader.dataset)
-    avg_gating_accuracy = avg_gating_accuracy / batch_idx
 
     print(f'Test set Average loss: {avg_total_loss:.4f}')
     print(f'  Reconstruction loss: {avg_reconstruction_loss:.4f}')
@@ -312,7 +311,7 @@ def main(config=None):
 
     print(config)
         
-    results_dir_base = f"semestral-project-awareness/vae/snapshots/{dataset}/moe_supervised_ld{latent_dim}_ne{num_experts}{results_dir_suffix}"
+    results_dir_base = f"snapshots/{dataset}/moe_supervised_ld{latent_dim}_ne{num_experts}{results_dir_suffix}"
 
     if test_flag:
         results_dir = f"{results_dir_base}_test"

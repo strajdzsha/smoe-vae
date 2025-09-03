@@ -13,7 +13,7 @@ import os
 
 from datasets import RotatedMNISTDataset, CombinedDataset, QuickDrawImageDataset
 from torch.utils.data import Subset
-from visualization_utils import visualize_latent_space, visualize_reconstructions, visualize_expert_activation_space, visualize_expert_frequencies, visualize_expert_correlation
+from visualization_utils import visualize_latent_space, visualize_reconstructions, visualize_expert_activation_space, visualize_expert_frequencies, visualize_expert_correlation, visualize_expert_specialization, visualize_latent_interpolation
 
 
 class ConvEncoder(nn.Module):
@@ -581,6 +581,16 @@ def main(config=None):
     # Visualize expert frequencies
     histogram_plot_path = os.path.join(results_dir, 'expert_histogram.png')
     visualize_expert_frequencies(model, test_dataloader, device, num_experts, save_path=histogram_plot_path)
+
+    # Visualize expert specialization
+    expert_specialization_plot_path = os.path.join(results_dir, 'expert_specialization.png')
+    visualize_expert_specialization(model, test_dataloader, device, num_experts, save_path=expert_specialization_plot_path)
+
+    # Visualize latent interpolation
+    latent_interpolation_plot_path = os.path.join(results_dir, 'latent_interpolation.png')
+    visualize_latent_interpolation(model, device, results_dir, num_points=20, save_path=latent_interpolation_plot_path)
+
+    print("Visualization complete.")
     # Save the final model
     final_model_path = os.path.join(results_dir, 'vae_moe_model_final.pth')
     torch.save(model.state_dict(), final_model_path)
