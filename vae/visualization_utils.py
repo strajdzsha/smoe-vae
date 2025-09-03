@@ -622,32 +622,32 @@ def visualize_pretrained_model(model_dir, output_dir=None, download_data=False):
     print("Generating visualizations...")
     
     # Visualize latent space
-    # latent_plot_path = os.path.join(output_dir, 'tsne_latent_space_classs_moe.png')
-    # visualize_latent_space(model, test_dataloader, device, save_path=latent_plot_path, output_dir=output_dir)
+    latent_plot_path = os.path.join(output_dir, 'tsne_latent_space_classs_moe.png')
+    visualize_latent_space(model, test_dataloader, device, save_path=latent_plot_path, output_dir=output_dir)
     
-    # # Visualize reconstructions
-    # recon_plot_path = os.path.join(output_dir, 'reconstructions_moe.png')
-    # visualize_reconstructions(model, test_dataloader, device, save_path=recon_plot_path)
+    # Visualize reconstructions
+    recon_plot_path = os.path.join(output_dir, 'reconstructions_moe.png')
+    visualize_reconstructions(model, test_dataloader, device, save_path=recon_plot_path)
     
-    # # Visualize expert activation space - reuse embeddings from latent space visualization
-    # expert_activation_plot_path = os.path.join(output_dir, 'expert_activation_space.png')
-    # visualize_expert_activation_space(model, test_dataloader, device, save_path=expert_activation_plot_path, output_dir=output_dir)
+    # Visualize expert activation space - reuse embeddings from latent space visualization
+    expert_activation_plot_path = os.path.join(output_dir, 'expert_activation_space.png')
+    visualize_expert_activation_space(model, test_dataloader, device, save_path=expert_activation_plot_path, output_dir=output_dir)
     
-    # # Visualize expert correlation with class labels
-    # expert_correlation_plot_path = os.path.join(output_dir, 'expert_correlation.png')
-    # visualize_expert_correlation(model, test_dataloader, device, num_experts, save_path=expert_correlation_plot_path)
+    # Visualize expert correlation with class labels
+    expert_correlation_plot_path = os.path.join(output_dir, 'expert_correlation.png')
+    visualize_expert_correlation(model, test_dataloader, device, num_experts, save_path=expert_correlation_plot_path)
     
-    # # Visualize expert frequencies
-    # histogram_plot_path = os.path.join(output_dir, 'expert_histogram.png')
-    # visualize_expert_frequencies(model, test_dataloader, device, num_experts, save_path=histogram_plot_path)
+    # Visualize expert frequencies
+    histogram_plot_path = os.path.join(output_dir, 'expert_histogram.png')
+    visualize_expert_frequencies(model, test_dataloader, device, num_experts, save_path=histogram_plot_path)
     
     # Visualize expert specialization
     expert_specialization_plot_path = os.path.join(output_dir, 'expert_specialization.png')
     visualize_expert_specialization(model, test_dataloader, device, num_experts, save_path=expert_specialization_plot_path)
 
-    # # Visualize latent interpolation
-    # latent_interpolation_plot_path = os.path.join(output_dir, 'latent_interpolation.png')
-    # visualize_latent_interpolation(model, device, output_dir, num_points=20, save_path=latent_interpolation_plot_path)
+    # Visualize latent interpolation
+    latent_interpolation_plot_path = os.path.join(output_dir, 'latent_interpolation.png')
+    visualize_latent_interpolation(model, device, output_dir, num_points=20, save_path=latent_interpolation_plot_path)
     
     # Evaluate linear classification performance
     print("\n" + "="*50)
@@ -1163,16 +1163,5 @@ def evaluate_linear_classification(latent_vectors_path, labels, selected_experts
     
 if __name__ == "__main__":
     # Example usage
-    # n_experts = [15, 20, 25, 30, 35, 40, 45, 50]
-    # for ne in n_experts:
-    #     for trial in range(5, 8):
-    #         model_dir = f'/home/stnikoli/semestral-project-awareness/vae/snapshots/quickdraw/dataset_size/moe_ld32_ne{ne}_0.4_dataset_percentage_{trial}'
-    #         # check whether vae_moe_model_final.pth exists in model_dir
-    #         model_path = os.path.join(model_dir, 'vae_moe_model_final.pth')
-    #         if not os.path.exists(model_path):
-    #             print(f"Model {model_path} does not exist, skipping...")
-    #             continue
-    #         print(f"Visualizing model {model_dir}...")
-    #         visualize_pretrained_model(model_dir, None)
-    model_dir = f'/home/stnikoli/semestral-project-awareness/vae/snapshots/quickdraw/dataset_size/moe_ld32_ne10_1.0_dataset_percentage_4'
+    model_dir = f'results/moe_ld32_ne10_1.0_dataset_percentage_4'
     visualize_pretrained_model(model_dir, None)
