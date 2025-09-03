@@ -11,7 +11,7 @@ from tqdm import tqdm
 from sklearn.manifold import TSNE
 import os
 
-from datasets import RotatedMNISTDataset, CombinedDataset, QuickDrawImageDataset, SyntheticClusterDataset
+from datasets import RotatedMNISTDataset, CombinedDataset, QuickDrawImageDataset
 from torch.utils.data import Subset
 from visualization_utils import visualize_latent_space, visualize_reconstructions, visualize_expert_activation_space, visualize_expert_frequencies, visualize_expert_correlation
 

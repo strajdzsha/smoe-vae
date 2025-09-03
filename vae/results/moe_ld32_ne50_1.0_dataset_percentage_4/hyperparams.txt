@@ -1,0 +1,10 @@
+latent_dim=32
+num_experts=50
+batch_size=128
+learning_rate=0.001
+epochs=20
+beta=0.01
+load_balancing_coeff=200.0
+entropy_coeff=400.0
+dataset=quickdraw
+model_size=lite
