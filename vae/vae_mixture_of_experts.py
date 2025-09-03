@@ -15,62 +15,6 @@ from datasets import RotatedMNISTDataset, CombinedDataset, QuickDrawImageDataset
 from torch.utils.data import Subset
 from visualization_utils import visualize_latent_space, visualize_reconstructions, visualize_expert_activation_space, visualize_expert_frequencies, visualize_expert_correlation
 
-# # Define Convolutional Encoder (Same as before)
-# class ConvEncoder(nn.Module):
-#     def __init__(self, latent_dim):
-#         super(ConvEncoder, self).__init__()
-#         self.conv1 = nn.Sequential(
-#             nn.Conv2d(1, 32, kernel_size=3, stride=1, padding=1),
-#             nn.BatchNorm2d(32),
-#             nn.LeakyReLU(0.2)
-#         )
-#         self.conv2 = nn.Sequential(
-#             nn.Conv2d(32, 64, kernel_size=3, stride=2, padding=1),  # 28x28 → 14x14
-#             nn.BatchNorm2d(64),
-#             nn.LeakyReLU(0.2)
-#         )
-#         self.conv3 = nn.Sequential(
-#             nn.Conv2d(64, 128, kernel_size=3, stride=2, padding=1),  # 14x14 → 7x7
-#             nn.BatchNorm2d(128),
-#             nn.LeakyReLU(0.2)
-#         )
-#         self.fc_mu = nn.Linear(128 * 7 * 7, latent_dim)
-#         self.fc_logvar = nn.Linear(128 * 7 * 7, latent_dim)
-
-#     def forward(self, x):
-#         x = self.conv1(x)
-#         x = self.conv2(x)
-#         x = self.conv3(x)
-#         x = x.view(x.size(0), -1)
-#         mu = self.fc_mu(x)
-#         log_var = self.fc_logvar(x)
-#         return mu, log_var
-
-# # Define Decoder for MNIST digits (Same as before)
-# class ConvDecoder(nn.Module):
-#     def __init__(self, latent_dim):
-#         super(ConvDecoder, self).__init__()
-#         self.fc = nn.Linear(latent_dim, 128 * 7 * 7)
-
-#         self.deconv1 = nn.Sequential(
-#             nn.ConvTranspose2d(128, 64, kernel_size=4, stride=2, padding=1),  # 7x7 → 14x14
-#             nn.BatchNorm2d(64),
-#             nn.LeakyReLU(0.2)
-#         )
-#         self.deconv2 = nn.Sequential(
-#             nn.ConvTranspose2d(64, 32, kernel_size=4, stride=2, padding=1),  # 14x14 → 28x28
-#             nn.BatchNorm2d(32),
-#             nn.LeakyReLU(0.2)
-#         )
-#         self.deconv3 = nn.ConvTranspose2d(32, 1, kernel_size=3, stride=1, padding=1)
-
-#     def forward(self, z):
-#         x = self.fc(z)
-#         x = x.view(x.size(0), 128, 7, 7)
-#         x = self.deconv1(x)
-#         x = self.deconv2(x)
-#         x = torch.sigmoid(self.deconv3(x))  # Output in [0, 1]
-#         return x
 
 class ConvEncoder(nn.Module):
     def __init__(self, latent_dim):
@@ -411,7 +355,7 @@ def main(config=None):
 
     print(config)
         
-    results_dir_base = f"semestral-project-awareness/vae/snapshots/{dataset}/dataset_size/moe_ld{latent_dim}_ne{num_experts}{results_dir_suffix}"
+    results_dir_base = f"snapshots/{dataset}/moe_ld{latent_dim}_ne{num_experts}{results_dir_suffix}"
 
     if test_flag:
         results_dir = f"{results_dir_base}_test" # Directory to save results
@@ -492,97 +436,6 @@ def main(config=None):
         samples_per_category = int(dataset_percentage * 70000)  # 70,000 is the default number of samples per category in QuickDraw
         OriginalTrainDataset = QuickDrawImageDataset(root='./data/quickdraw', train=True, download=True, transform=base_transform, samples_per_category=samples_per_category, categories=categories)
         OriginalTestDataset = QuickDrawImageDataset(root='./data/quickdraw', train=False, download=True, transform=base_transform, samples_per_category=int(0.1*samples_per_category), categories=categories)
-    elif dataset == 'sinusoidal':
-        print("Loading Sinusoidal2D dataset.")
-        from datasets import Sinusoidal2DDataset
-        # Get parameters from config
-        mode = config.get('sinusoidal_mode', 'rotation')
-        num_unique = config.get('num_unique', 5)
-        samples_per_unique = config.get('samples_per_unique', 1000)
-        img_size = config.get('img_size', 28)
-        base_frequency = config.get('base_frequency', 1.0)
-        noise_std = config.get('noise_std', 0.1)
-        
-        if mode == 'frequency':
-            min_frequency = config.get('min_frequency', 0.5)
-            max_frequency = config.get('max_frequency', 2.0)
-            OriginalTrainDataset = Sinusoidal2DDataset(mode=mode,
-                                                       num_unique=num_unique,
-                                                       samples_per_unique=samples_per_unique,
-                                                       img_size=img_size,
-                                                       base_frequency=base_frequency,
-                                                       noise_std=noise_std,
-                                                       min_frequency=min_frequency,
-                                                       max_frequency=max_frequency,
-                                                       transform=base_transform)
-            OriginalTestDataset = Sinusoidal2DDataset(mode=mode,
-                                                      num_unique=num_unique,
-                                                      samples_per_unique=int(samples_per_unique * 0.2),
-                                                      img_size=img_size,
-                                                      base_frequency=base_frequency,
-                                                      noise_std=noise_std,
-                                                      min_frequency=min_frequency,
-                                                      max_frequency=max_frequency,
-                                                      random_seed=config.get('random_seed', 42) + 1000,
-                                                      transform=base_transform)
-        else:
-            OriginalTrainDataset = Sinusoidal2DDataset(mode=mode,
-                                                       num_unique=num_unique,
-                                                       samples_per_unique=samples_per_unique,
-                                                       img_size=img_size,
-                                                       base_frequency=base_frequency,
-                                                       noise_std=noise_std,
-                                                       transform=base_transform)
-            OriginalTestDataset = Sinusoidal2DDataset(mode=mode,
-                                                      num_unique=num_unique,
-                                                      samples_per_unique=int(samples_per_unique * 0.2),
-                                                      img_size=img_size,
-                                                      base_frequency=base_frequency,
-                                                      noise_std=noise_std,
-                                                      random_seed=config.get('random_seed', 42) + 1000,
-                                                      transform=base_transform)
-        print(f"Train dataset: {len(OriginalTrainDataset)} samples")
-        print(f"Test dataset: {len(OriginalTestDataset)} samples")
-    
-    elif dataset == 'synthetic':
-        print("Loading Synthetic Cluster dataset.")
-        num_clusters = config.get('num_clusters', 5)  # Number of clusters to generate
-        samples_per_cluster = config.get('samples_per_cluster', 2000)  # Samples per cluster
-        cluster_separation = config.get('cluster_separation', 8.0)  # Distance between cluster centers
-        cluster_std = config.get('cluster_std', 2.0)  # Standard deviation for cluster center placement
-        blob_std = config.get('blob_std', 1.5)  # Standard deviation for individual Gaussian blobs
-        random_seed = config.get('random_seed', 42)  # Random seed for reproducibility
-        
-        print(f"  Generating {num_clusters} clusters with {samples_per_cluster} samples each")
-        print(f"  Cluster separation: {cluster_separation}, Cluster std: {cluster_std}, Blob std: {blob_std}")
-        
-        # Create train dataset
-        OriginalTrainDataset = SyntheticClusterDataset(
-            num_clusters=num_clusters, 
-            samples_per_cluster=samples_per_cluster,
-            cluster_separation=cluster_separation,
-            cluster_std=cluster_std,
-            blob_std=blob_std,
-            random_seed=random_seed,
-            transform=base_transform
-        )
-        
-        # Create test dataset with different seed and fewer samples
-        OriginalTestDataset = SyntheticClusterDataset(
-            num_clusters=num_clusters, 
-            samples_per_cluster=int(samples_per_cluster * 0.2),  # 20% of train size for test
-            cluster_separation=cluster_separation,
-            cluster_std=cluster_std,
-            blob_std=blob_std,
-            random_seed=random_seed + 1000,  # Different seed for test set
-            transform=base_transform
-        )
-        
-        # Print cluster information
-        cluster_info = OriginalTrainDataset.get_cluster_info()
-        print(f"  Train dataset: {cluster_info['total_samples']} total samples")
-        cluster_info_test = OriginalTestDataset.get_cluster_info()
-        print(f"  Test dataset: {cluster_info_test['total_samples']} total samples")
     else:
         print("Loading MNIST dataset.")
         OriginalTrainDataset = datasets.MNIST(root='./data', train=True, download=True, transform=base_transform)
@@ -641,25 +494,25 @@ def main(config=None):
         test_kl_losses.append(test_kl)
         test_lb_losses.append(test_lb)
 
-        # # Save model state periodically
-        # if (epoch + 1) % 10 == 0 or epoch == epochs - 1:
-        #      model_save_path = os.path.join(results_dir, f'vae_moe_model_epoch_{epoch+1}.pth')
-        #      torch.save(model.state_dict(), model_save_path)
-        #      print(f"Model state saved to {model_save_path}")
+        # Save model state periodically
+        if (epoch + 1) % 10 == 0 or epoch == epochs - 1:
+             model_save_path = os.path.join(results_dir, f'vae_moe_model_epoch_{epoch+1}.pth')
+             torch.save(model.state_dict(), model_save_path)
+             print(f"Model state saved to {model_save_path}")
 
-    # # Plot the entropy of expert selection
-    # expert_probs = np.concatenate(expert_probs, axis=0) # Shape: (num_samples, num_experts)
-    # expert_entropy = -np.sum(expert_probs * np.log(expert_probs + 1e-8), axis=1) # Shape: (num_samples,)
-    # plt.figure(figsize=(10, 6))
-    # plt.hist(expert_entropy, bins=50, alpha=0.7)
-    # plt.title('Entropy of Expert Selection')
-    # plt.xlabel('Entropy')
-    # plt.ylabel('Frequency')
-    # entropy_plot_path = os.path.join(results_dir, 'expert_entropy.png')
-    # plt.savefig(entropy_plot_path)
-    # plt.close()
-    # print(f"Entropy plot saved to {entropy_plot_path}")
-    # # Save losses to .npy files for later analysis
+    # Plot the entropy of expert selection
+    expert_probs = np.concatenate(expert_probs, axis=0) # Shape: (num_samples, num_experts)
+    expert_entropy = -np.sum(expert_probs * np.log(expert_probs + 1e-8), axis=1) # Shape: (num_samples,)
+    plt.figure(figsize=(10, 6))
+    plt.hist(expert_entropy, bins=50, alpha=0.7)
+    plt.title('Entropy of Expert Selection')
+    plt.xlabel('Entropy')
+    plt.ylabel('Frequency')
+    entropy_plot_path = os.path.join(results_dir, 'expert_entropy.png')
+    plt.savefig(entropy_plot_path)
+    plt.close()
+    print(f"Entropy plot saved to {entropy_plot_path}")
+    # Save losses to .npy files for later analysis
     np.save(os.path.join(results_dir, 'train_recon_losses.npy'), train_recon_losses)
     np.save(os.path.join(results_dir, 'test_recon_losses.npy'), test_recon_losses)
 
@@ -740,8 +593,8 @@ if __name__ == "__main__":
     with open('vae/config.yaml', 'r') as f:
         config = yaml.safe_load(f)
     
-    # Choose configuration: 'debug', 'train', or 'synthetic'
-    config_name = 'synthetic'  # Change this to switch between configurations
+    # Choose configuration: 'debug' or 'train'
+    config_name = 'debug'  # Change this to switch between configurations
     config = config[config_name]
     
     print(f"Using configuration: {config_name}")

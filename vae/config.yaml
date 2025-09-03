@@ -14,8 +14,8 @@ train:
   dataset_percentage: 1.0
   encoder_size: 'medium'
 debug:
-  num_experts: 5
-  latent_dim: 32
+  num_experts: 1
+  latent_dim: 16
   epochs: 1
   test_flag: true
   dataset: mnist  # Default dataset
@@ -25,57 +25,6 @@ debug:
   beta: 1.0  # Default weight for KL divergence term
   load_balancing_coeff: 1  # Default weight for load balancing loss
   entropy_coeff: 1.0  # Default weight for entropy term
-
-synthetic:
-  num_experts: 10
-  latent_dim: 32
-  epochs: 20
-  test_flag: false
-  dataset: synthetic  # Synthetic cluster dataset
-  results_dir_suffix: "_synthetic"  # Suffix for results directory
-  batch_size: 128  # Default batch size
-  learning_rate: 0.001  # Default learning rate
-  beta: 1.0  # Default weight for KL divergence term
-  load_balancing_coeff: 200.0  # Default weight for load balancing loss
-  entropy_coeff: 400.0  # Default weight for entropy term
-  model_size: 'lite'
-  dataset_percentage: 1.0
-  encoder_size: 'medium'
-  # Synthetic dataset specific parameters
-  num_clusters: 5  # Number of clusters to generate
-  samples_per_cluster: 20000  # Samples per cluster
-  cluster_separation: 8.0  # Distance between cluster centers
-  cluster_std: 2.0  # Standard deviation for cluster center placement
-  blob_std: 1.5  # Standard deviation for individual Gaussian blobs
-  random_seed: 42  # Random seed for reproducibility
-
-# Configuration for Sinusoidal Pattern Experiments
-# Configuration for Sinusoidal Pattern Experiments
-sinusoidal:
-  dataset: sinusoidal
-  sinusoidal_mode: rotation  # Options: "rotation" or "frequency"
-  results_dir_suffix: "_sinusoidal"  # Suffix for results directory
-  test_flag: false
-  num_unique: 5
-  samples_per_unique: 10000
-  img_size: 28
-  base_frequency: 1.0
-  noise_std: 0.1
-  phase_range: [0, 6.283185307179586]  # 0 to 2*pi
-  rotation_range: [0, 360]             # Only used in 'rotation' mode
-  min_frequency: 1.0                   # Only used in 'frequency' mode
-  max_frequency: 5.0                   # Only used in 'frequency' mode
-  random_seed: 42
-  batch_size: 128
-  latent_dim: 32
-  num_experts: 10
-  epochs: 20
-  learning_rate: 0.001
-  beta: 1.0
-  load_balancing_coeff: 100.0
-  entropy_coeff: 200.0
   model_size: 'lite'
   encoder_size: 'medium'
   dataset_percentage: 1.0
-
-  
