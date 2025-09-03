@@ -3,7 +3,6 @@ data/
 snapshots/
 *.gz
 *.png
-*.svg
 *.jpg
 *.pyc
 *.zip
